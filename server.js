@@ -107,51 +107,6 @@ app.get('/lastfm-key', (req, res) => {
         res.status(500).send('Erro ao obter a chave da API do Last.fm');
     }
 });
-
-//------------------------FLCIKER API----------------------------------------------
-/*
-app.get('/flickr-search', async (req, res) => {
-    const searchQuery = req.query.text;
-
-    if (!searchQuery) {
-        console.log('Missing search query');
-        return res.status(400).send('Missing search query');
-    }
-
-    const flickrApiKey = process.env.FLICKR_API_KEY;
-
-    try {
-        const response = await axios.get('https://www.flickr.com/services/rest/', {
-            params: {
-                method: 'flickr.photos.search',
-                api_key: flickrApiKey,
-                text: searchQuery,
-                format: 'json',
-                nojsoncallback: 1,
-                per_page: 5
-            }
-        });
-
-        const photos = response.data.photos.photo;
-        if (!photos) {
-            console.log('Unexpected response from Flickr API:', response.data);
-            return res.status(500).send('Unexpected response from Flickr API');
-        }
-
-        const photoUrls = photos.map(photo => {
-            return `https://live.staticflickr.com/${photo.server}/${photo.id}_${photo.secret}.jpg`;
-        });
-
-        res.json({ photoUrls });
-    } catch (error) {
-        // Log the complete error to understand the 500 issue
-        console.error('Error fetching photos from Flickr:', error.message);
-        console.error('Error details:', error.response ? error.response.data : error);
-        res.status(500).send('Error fetching photos from Flickr');
-    }
-});
-
-*/
 //---------------------------Youtube API-----------------------------------------------
 
 app.get('/youtube-search', async (req, res) => {

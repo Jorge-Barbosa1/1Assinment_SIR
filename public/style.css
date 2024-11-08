@@ -1,66 +1,118 @@
 /* style.css */
+
+/* Base Styles */
 body {
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
+    color: #333;
     margin: 0;
     padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    line-height: 1.6;
+}
+
+h1, h2 {
+    color: #1db954;
+    text-align: center;
 }
 
 .container {
     width: 80%;
+    max-width: 1200px;
     margin: 0 auto;
     text-align: center;
-    padding-top: 40px;
+    padding: 40px 0;
 }
-.container h1 {
-    margin-bottom: 5px;
-}
-input {
+
+input, button {
     padding: 10px;
-    width: 80%;
-    margin-bottom: 10px;
+    margin: 10px 5px;
     border-radius: 5px;
     border: 1px solid #ccc;
+    font-size: 1em;
+}
+
+input {
+    width: 80%;
 }
 
 button {
-    padding: 10px 20px;
     background-color: #1db954;
-    color: white;
+    color: #fff;
     border: none;
-    border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 button:hover {
     background-color: #1aa34a;
 }
 
+/* Specific to index.html */
+#index-page .container {
+    text-align: center;
+    padding-top: 50px;
+}
+
 .artist-info {
     margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .artist-info img {
     border-radius: 50%;
     width: 150px;
     height: 150px;
+    margin-bottom: 15px;
 }
 
-#similar-artists {
+#youtube-video {
     margin-top: 30px;
 }
 
+#login-btn {
+    padding: 10px 20px;
+    font-size: 1.1em;
+    margin-top: 20px;
+    background-color: #ff5a5f;
+    border: none;
+}
+
+#login-btn:hover {
+    background-color: #e04e53;
+}
+
+/* General Navigation Styles */
+nav {
+    margin-top: 20px;
+    text-align: center;
+    background-color: #1db954;
+    padding: 10px 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+nav a {
+    color: #fff;
+    text-decoration: none;
+    margin: 0 15px;
+    font-size: 1.1em;
+    transition: color 0.3s ease;
+}
+
+nav a:hover {
+    color: #b3e6c6;
+}
+
+/* Shared Styles for Other Pages */
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
+    grid-template-columns: repeat(4, 1fr); /* Sempre 4 colunas */
+    gap: 20px; /* Espaço entre os itens */
     margin-top: 20px;
 }
 
+/* Audio Player - Ajuste */
 .track-item {
     text-align: center;
     padding: 10px;
@@ -74,25 +126,30 @@ button:hover {
     height: 100px;
     border-radius: 5px;
 }
-
-.events-container {
-    margin-top: 30px;
+/* Footer (shared across pages) */
+footer {
+    text-align: center;
+    padding: 10px 0;
+    background-color: #f1f1f1;
+    color: #555;
 }
 
-.event-item {
-    text-align: left;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    background-color: #f9f9f9;
-    margin-bottom: 10px;
-}
-
-.event-item h3 {
-    font-size: 1.2em;
+footer p {
     margin: 0;
 }
 
-.event-item p {
-    margin: 5px 0;
+/* Responsiveness */
+@media (max-width: 768px) {
+    .grid-container {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+
+    nav a {
+        margin: 10px 0;
+        display: block;
+    }
+
+    #login-btn {
+        width: 100%;
+    }
 }

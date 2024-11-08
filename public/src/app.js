@@ -12,17 +12,12 @@ window.onload = function () {
     window.location.hash = '';
 
     const access_token = hash.access_token;
-    //console.log('Access Token:', access_token); // Debugging
 
     // If the current page is the index.html page
     if (document.body.id === 'index-page') {
-
         if (access_token) {
             document.getElementById('search-btn').addEventListener('click', () => {
                 const usersSearch = document.getElementById('users-Search').value;
-
-                //console.log('Search:', usersSearch); // Debugging
-                //console.log('Access Token:', access_token); // Debugging
 
                 const loginLink = document.getElementById('login-link');
                 if (loginLink) {
@@ -30,16 +25,15 @@ window.onload = function () {
                 }
 
                 if (usersSearch) {
-                    searchArtistOrTrack(usersSearch, access_token); // Search for an artist or track using the Spotify Web API
-                    //fetchFlickrPhotos(usersSearch); // Fetch photos from the Flicker API
-                    fetchYouTubeVideo(usersSearch); // Fetch video from the YouTube API
+                    fetchArtistOrTrack(usersSearch, access_token); // Search for an artist or track using the Spotify Web API
+                    fetchYouTubeVideo(usersSearch);// Display a YouTube video related to the search query
                 }
             });
         } else {
             alert('You need to log in to Spotify.');
         }
-    } else if (document.body.id === 'similar-artists-page') { // If the current page is the similar-artists.html page
-        // Página de artistas semelhantes
+    } else if (document.body.id === 'similar-artists-page') { 
+        // Similar artists page
         const urlParams = new URLSearchParams(window.location.search);
         const artistName = urlParams.get('artist');
 
@@ -48,29 +42,38 @@ window.onload = function () {
                 .then(apiKey => fetchSimilarArtists(artistName, apiKey))
                 .catch(error => console.error('Erro ao obter artistas semelhantes:', error));
         }
+
+    } else if (document.body.id === 'musics-page') { 
+        
+        // Musics page
+        const access_token = localStorage.getItem('access_token'); // Get the access token from the local storage
+        const urlParams = new URLSearchParams(window.location.search);
+        const query = urlParams.get('query');
+
+        console.log('Query:', query); // Depuração
+        console.log('Access token:', access_token); // Depuração
+
+        if (query && access_token) {
+            // Chama a função fetchArtistOrTrack para buscar músicas
+            fetchArtistOrTrack(query, access_token);
+        } else {
+            console.error('Query ou access token não disponíveis.');
+            const tracksContainer = document.getElementById('tracks');
+            if (tracksContainer) {
+                tracksContainer.innerHTML = '<p>No tracks found.</p>';
+            }
+        }
     }
 };
 
 // Function to search for an artist or track using the Spotify Web API
-function searchArtistOrTrack(query, token) {
+function fetchArtistOrTrack(query, token) {
     if (!query) { // Check if the query is empty
         console.error('Query is undefined or null.');
         return;
     }
 
-    /*  Debugging
-
-    if (!token) { // Check if the token is empty
-        console.error('Token is undefined or null.');
-        return;
-    } else {
-        console.log('Token:', token); // Debugging
-    }
-    
-    */
     const url = `https://api.spotify.com/v1/search?q=${query}&type=artist,track`;
-
-    console.log('Request URL:', url); // Debugging
 
     fetch(url, {
         headers: {
@@ -79,38 +82,38 @@ function searchArtistOrTrack(query, token) {
     })
         .then(response => {
             if (!response.ok) {
-                // If the response is not ok, throw an error
-                console.error('Erro ao procurar o artista ou música:', response.status);
-                throw new Error('Erro ao procurar o artista ou música:');
+                console.error('Erro ao procurar músicas:', response.status);
+                throw new Error('Erro ao procurar músicas');
             }
             return response.json();
         })
         .then(data => {
-            //Verify if there is an error in the response
-            if (data.error) {
-                console.error('Erro ao procurar o artista ou música:', data.error.message);
-                return;
+            if (data.tracks?.items.length > 0) {
+                displayArtistTracks(data); // Exibe as músicas
+            } else {
+                const tracksContainer = document.getElementById('tracks');
+                if (tracksContainer) {
+                    tracksContainer.innerHTML = '<p>No tracks found.</p>';
+                }
             }
-            displaySearchResults(data);
         })
         .catch(error => {
-            console.error('Erro ao procurar o artista ou música:', error);
+            console.error('Erro ao buscar músicas:', error);
         });
 }
 
 // Function to display the search results on the page
 function displaySearchResults(data) {
     const artistInfoContainer = document.getElementById('artist-info'); //artist info container
-    const tracksContainer = document.getElementById('tracks'); //tracks container
 
     // Clear the containers
     artistInfoContainer.innerHTML = '';
-    tracksContainer.innerHTML = '';
 
     const artistResults = data.artists?.items[0]; // Security verification (?) to see if there are 1 artist found 
-    const trackResults = data.tracks?.items.slice(0, 8) // Security verification (?) to see if there are 8 tracks found 
 
     // Show found artist
+
+
     if (artistResults) {
         const artistDiv = document.createElement('div');
         artistDiv.innerHTML = `
@@ -120,7 +123,37 @@ function displaySearchResults(data) {
         artistInfoContainer.appendChild(artistDiv);
     }
 
-    // Mostrar as músicas encontradas
+    // Show message if no artists or tracks were found
+    if (!artistResults === 0) {
+        resultsContainer.innerHTML = '<p>Nenhum artista encontrado.</p>';
+    }
+}
+
+
+// Function to display only the musics of the artist in a grid of 2x4
+function displayArtistTracks(data) {
+    const tracksContainer = document.getElementById('tracks'); // Tracks container
+
+    if (!tracksContainer) {
+        console.error("Track element does not exist.");
+        return;
+    }
+
+    // Clear the container
+    tracksContainer.innerHTML = '';
+
+    const trackResults = data.tracks?.items.slice(0, 8); // Get up to 8 tracks
+
+    if (!trackResults || trackResults.length === 0) {
+        tracksContainer.innerHTML = '<p>No tracks found.</p>';
+        return;
+    }
+
+    // Create a grid container
+    const gridContainer = document.createElement('div');
+    gridContainer.className = 'grid-container';
+
+    // Display the tracks in a 2x4 grid
     trackResults.forEach(track => {
         const trackDiv = document.createElement('div');
         trackDiv.classList.add('track-item');
@@ -129,17 +162,13 @@ function displaySearchResults(data) {
             <p><strong>${track.name}</strong> - ${track.artists.map(artist => artist.name).join(', ')}</p>
             <audio controls src="${track.preview_url}">Your browser does not support the audio element.</audio>
         `;
-        tracksContainer.appendChild(trackDiv);
+        gridContainer.appendChild(trackDiv);
     });
 
-    // Show message if no artists or tracks were found
-    if (!artistResults === 0 && trackResults.length === 0) {
-        resultsContainer.innerHTML = '<p>Nenhum artista ou música encontrado.</p>';
-    }
+    tracksContainer.appendChild(gridContainer);
 }
 
 //----------------------------------LAST.FM API----------------------------------
-
 
 // Function to fetch similar artists from the Last.fm API
 
@@ -199,8 +228,15 @@ function displaySimilarArtists(artists) {
     artists.forEach(artist => {
         const artistDiv = document.createElement('div');
         artistDiv.className = 'track-item';
+
+        const imageUrl = artist.image[2]['#text'] || 'https://via.placeholder.com/150';
+
+        if(!imageUrl) {
+            console.error('Image URL not found:', artist);  
+        }
+
         artistDiv.innerHTML = `
-            <img src="${artist.image[2]['#text']}" alt="${artist.name}">
+            <img src="${imageUrl}" alt="${artist.name}">
             <p><strong>${artist.name}</strong></p>
         `;
         gridContainer.appendChild(artistDiv);
@@ -218,6 +254,7 @@ function displayNoSimilarArtists() {
 
     similarArtistsContainer.innerHTML = '<p>Nenhum artista semelhante encontrado.</p>';
 }
+
 //----------------------------------Youtube API-----------------------------------
 
 function fetchYouTubeVideo(query) {
@@ -278,10 +315,11 @@ function redirectToIndexPage() {
     window.location.href = 'index.html';
 }
 
-function redirectToMusicsPage(){
+// Function to redirect to the musics.html page
+function redirectToMusicsPage() {
     const usersSearch = document.getElementById('users-Search').value;
     if (usersSearch) {
-        window.location.href = `musics.html?artist=${encodeURIComponent(usersSearch)}`;
+        window.location.href = `musics.html?query=${encodeURIComponent(usersSearch)}`;
     }
 }
 
