@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Titulo Diferenciado</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body id="index-page">
+    <div class="container">
+        <h1>Search for an Artist</h1> 
+        <input type="text" id="users-Search" placeholder="Enter artist name">
+        <button id="search-btn">Search</button>
+        <button onclick="redirectToSimilarArtistsPage()">See Similar Artists</button>
+
+        <div id="artist-info" class="artist-info">
+            <!-- Name and pic will show here -->
+        </div>
+
+        <div id="tracks" class="grid-container">
+            <!--The musics will show here in a 2x4 grid -->
+        </div>
+
+        <div id="youtube-video" >
+            <!--The Youtube Video will apear here -->
+        </div>
+
+        <a href="/login" id="login-link"><button id="login-btn">Login with Spotify</button></a> <!-- Link to login -->
+    </div>
+
+    <script src="/src/app.js"></script>
+</body>
+</html>
