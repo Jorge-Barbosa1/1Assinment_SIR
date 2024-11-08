@@ -16,6 +16,11 @@ window.onload = function () {
     // If the current page is the index.html page
     if (document.body.id === 'index-page') {
         if (access_token) {
+
+            // Save the access token in the local storage
+            localStorage.setItem('access_token', access_token);
+
+            // Show the search form
             document.getElementById('search-btn').addEventListener('click', () => {
                 const usersSearch = document.getElementById('users-Search').value;
 
@@ -25,7 +30,7 @@ window.onload = function () {
                 }
 
                 if (usersSearch) {
-                    fetchArtistOrTrack(usersSearch, access_token); // Search for an artist or track using the Spotify Web API
+                    fetchArtistLogo(usersSearch, access_token); // Search for an artist or track using the Spotify Web API
                     fetchYouTubeVideo(usersSearch);// Display a YouTube video related to the search query
                 }
             });
@@ -47,6 +52,7 @@ window.onload = function () {
         
         // Musics page
         const access_token = localStorage.getItem('access_token'); // Get the access token from the local storage
+    
         const urlParams = new URLSearchParams(window.location.search);
         const query = urlParams.get('query');
 
@@ -55,7 +61,7 @@ window.onload = function () {
 
         if (query && access_token) {
             // Chama a função fetchArtistOrTrack para buscar músicas
-            fetchArtistOrTrack(query, access_token);
+            fetchArtistTrack(query, access_token);
         } else {
             console.error('Query ou access token não disponíveis.');
             const tracksContainer = document.getElementById('tracks');
@@ -67,7 +73,7 @@ window.onload = function () {
 };
 
 // Function to search for an artist or track using the Spotify Web API
-function fetchArtistOrTrack(query, token) {
+function fetchArtistTrack(query, token) {
     if (!query) { // Check if the query is empty
         console.error('Query is undefined or null.');
         return;
@@ -78,7 +84,7 @@ function fetchArtistOrTrack(query, token) {
     fetch(url, {
         headers: {
             'Authorization': 'Bearer ' + token
-        }
+        }       
     })
         .then(response => {
             if (!response.ok) {
@@ -89,7 +95,7 @@ function fetchArtistOrTrack(query, token) {
         })
         .then(data => {
             if (data.tracks?.items.length > 0) {
-                displayArtistTracks(data); // Exibe as músicas
+                displayArtistTracks(data); 
             } else {
                 const tracksContainer = document.getElementById('tracks');
                 if (tracksContainer) {
@@ -102,6 +108,41 @@ function fetchArtistOrTrack(query, token) {
         });
 }
 
+
+function fetchArtistLogo(query, token) {
+    if (!query) { // Check if the query is empty
+        console.error('Query is undefined or null.');
+        return;
+    }
+
+    const url = `https://api.spotify.com/v1/search?q=${query}&type=artist,track`;
+
+    fetch(url, {
+        headers: {
+            'Authorization': 'Bearer ' + token
+        }       
+    })
+        .then(response => {
+            if (!response.ok) {
+                console.error('Error fetching artist logo:', response.status);
+                throw new Error('Error fetching artist logo');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.tracks?.items.length > 0) {
+                displaySearchResults(data); 
+            } else {
+                const logoContainer = document.getElementById('artist-info');
+                if (logoContainer) {
+                    logoContainer.innerHTML = '<p>No artist Logo</p>';
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error getting the artist logo:', error);
+        });
+}
 // Function to display the search results on the page
 function displaySearchResults(data) {
     const artistInfoContainer = document.getElementById('artist-info'); //artist info container
