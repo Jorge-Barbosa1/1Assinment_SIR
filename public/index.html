@@ -12,22 +12,22 @@
         <input type="text" id="users-Search" placeholder="Enter artist name">
         <button id="search-btn">Search</button>
         <button onclick="redirectToSimilarArtistsPage()">See Similar Artists</button>
+        <button onclick="redirectToMusicsPage()">See Musics</button>
 
         <div id="artist-info" class="artist-info">
             <!-- Name and pic will show here -->
         </div>
-
-        <div id="tracks" class="grid-container">
-            <!--The musics will show here in a 2x4 grid -->
-        </div>
-
         <div id="youtube-video" >
             <!--The Youtube Video will apear here -->
         </div>
 
         <a href="/login" id="login-link"><button id="login-btn">Login with Spotify</button></a> <!-- Link to login -->
     </div>
-
+    <nav>
+        <a href="/about.html">About</a>
+        <a href="/docs.html">Documentation</a>
+    </nav>
     <script src="/src/app.js"></script>
 </body>
+
 </html>

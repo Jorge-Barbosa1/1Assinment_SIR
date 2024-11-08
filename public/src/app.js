@@ -351,3 +351,15 @@ function redirectToSimilarArtistsPage() {
     }
 }
 
+// Função para redirecionar para a página inicial
+function redirectToIndexPage() {
+    window.location.href = 'index.html';
+}
+
+function redirectToMusicsPage(){
+    const usersSearch = document.getElementById('users-Search').value;
+    if (usersSearch) {
+        window.location.href = `musics.html?artist=${encodeURIComponent(usersSearch)}`;
+    }
+}
+
